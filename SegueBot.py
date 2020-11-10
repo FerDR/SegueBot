@@ -48,7 +48,7 @@ def get_image(link,debug=False):
     if debug:
         print(link)
     form = 'svg'
-    page = wikipedia.page(link)
+    page = wikipedia.page(link,auto_suggest=False)
     im = page.images
     img = [imgs for imgs in im if 'svg' not in imgs]
     url = img[np.random.randint(len(img))]
@@ -62,7 +62,7 @@ def get_first():
     return wikipedia.random()
 
 def get_next(page):
-    page = wikipedia.page(page)
+    page = wikipedia.page(page,auto_suggest=False)
     links = page.links
     return links[np.random.randint(len(links))]
 
