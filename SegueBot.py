@@ -5,6 +5,10 @@ import urllib.request
 import time
 import datetime
 import numpy as np
+import subprocess
+import webbrowser as wb
+from pynput.keyboard import Key,Controller
+from PIL import Image
 
 def upload_comment(graph, post_id, message="", img_path=None):
     if img_path:
@@ -50,13 +54,32 @@ def get_image(link,debug=False):
     form = 'svg'
     page = wikipedia.page(link,auto_suggest=False)
     im = page.images
+    if not im:
+        return False
     img = [imgs for imgs in im if 'png' in imgs or 'jpg' in imgs or 'jpeg' in imgs]
+    if not img:
+        return False
     url = img[np.random.randint(len(img))]
     form = url.split('.')[-1]
-    if form=='svg':
-        return '/home/pi/Documents/SegueBot/nominal.png'
-    urllib.request.urlretrieve(url, '/home/pi/Documents/SegueBot/image.{}'.format(form))
+    #if form=='svg':
+    #    return './nominal.png'
+    urllib.request.urlretrieve(url, './image.{}'.format(form))
     return '/home/pi/Documents/SegueBot/image.{}'.format(form)
+
+def get_screenshot(page):
+    subprocess.run(["/bin/bash","-i","-c","disp"])
+    wb.open(wikipedia.page(page,auto_suggest=False).url)
+    time.sleep(10)
+    subprocess.run(["scrot","./image.png"])
+    keyboard = Controller()
+    keyboard.press(Key.ctrl)
+    keyboard.press('w')
+    keyboard.release(Key.ctrl)
+    keyboard.press('w')
+    image = Image.open("./image.png")
+    image = image.crop((170,370,1920,1080))
+    image.save("./image.png")
+    return "./image.png"
 
 def get_first():
     return wikipedia.random()
@@ -95,13 +118,15 @@ def main(chain=[]):
             title = get_next(chain[-1])
     chain.append(title)
     text = gen_text(chain)
-    try:
-        img_path = get_image(chain[-1])
-    except:
-        img_path = '/home/pi/Documents/SegueBot/nominal.png'
-    #gr, p_id = upload(text,gettAccessToken(),img_path) 
+    #try:
+    img_path = get_image(chain[-1])
+    #except:
+    #img_path = '/home/pi/Documents/SegueBot/nominal.png'
+    if not img_path:
+        img_path = get_screenshot(title)
+    gr, p_id = upload(text,gettAccessToken(),img_path) 
     comment = gen_comment(chain)
-    #c_id = upload_comment(gr, p_id, comment)['id']
-    print(text)
-    print(comment)
+    c_id = upload_comment(gr, p_id, comment)['id']
+    #print(text)
+    #print(comment)
     np.save('chain',chain)
