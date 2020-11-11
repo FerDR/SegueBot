@@ -50,7 +50,7 @@ def get_image(link,debug=False):
     form = 'svg'
     page = wikipedia.page(link,auto_suggest=False)
     im = page.images
-    img = [imgs for imgs in im if 'svg' not in imgs]
+    img = [imgs for imgs in im if 'png' in imgs or 'jpg' in imgs or 'jpeg' in imgs]
     url = img[np.random.randint(len(img))]
     form = url.split('.')[-1]
     if form=='svg':
@@ -64,7 +64,13 @@ def get_first():
 def get_next(page):
     page = wikipedia.page(page,auto_suggest=False)
     links = page.links
-    return links[np.random.randint(len(links))]
+    while True:
+        nex = np.random.randint(len(links))
+        try:
+            testpage = wikipedia.page(nex)
+            return links[np.random.randint(len(links))]
+        except:
+            pass
 
 def gen_text(chain):
     if len(chain)>1:
