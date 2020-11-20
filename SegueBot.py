@@ -97,9 +97,9 @@ def get_next(page):
 
 def gen_text(chain):
     if len(chain)>1:
-        text = "The previous page, {}, has taken us to this new page: {}.".format(chain[-2],chain[-1])
+        text = "The previous page, {}, has taken us to this new page: {} ({}).".format(chain[-2],chain[-1],wikipedia.page(chain[-1],auto_suggest=False).url)
     else:
-        text = "A new segue is starting! The first page is {}.".format(chain[0])
+        text = "A new segue is starting! The first page is {} ({}).".format(chain[0],wikipedia.page(chain[-1],auto_suggest=False).url)
     return text
 
 def gen_comment(chain):
