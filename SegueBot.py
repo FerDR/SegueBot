@@ -123,7 +123,9 @@ def main(chain=[]):
     #except:
     #img_path = '/home/pi/Documents/SegueBot/nominal.png'
     if not img_path:
-        img_path = get_screenshot(title)
+        #img_path = get_screenshot(title)
+        img_path = '1x1.png'
+        text+='\nNo image found for this article :('
     gr, p_id = upload(text,gettAccessToken(),img_path) 
     comment = gen_comment(chain)
     c_id = upload_comment(gr, p_id, comment)['id']
