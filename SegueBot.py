@@ -64,7 +64,7 @@ def get_image(link,debug=False):
     #if form=='svg':
     #    return './nominal.png'
     urllib.request.urlretrieve(url, './image.{}'.format(form))
-    return '/home/fer/Documents/Facebook/SegueBot/image.{}'.format(form)
+    return '/home/fer/Documents/Bots/Facebook/SegueBot/image.{}'.format(form)
 
 def get_screenshot(page):
     subprocess.run(["/bin/bash","-i","-c","disp"])
