@@ -6,7 +6,7 @@ import os
 
 while True:
     date = datetime.datetime.utcnow()
-    if date.weekday()==0 and date.hour<1 or not os.exists('chain.npy'):
+    if date.weekday()==0 and date.hour<1 or not os.path.exists('chain.npy'):
         SB.main()
     else:
         SB.main(np.load('chain'))
