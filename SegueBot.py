@@ -9,6 +9,7 @@ import subprocess
 import webbrowser as wb
 from pynput.keyboard import Key,Controller
 from PIL import Image, ImageFont, ImageDraw
+import textwrap
 
 def upload_comment(graph, post_id, message="", img_path=None):
     if img_path:
@@ -111,13 +112,44 @@ def gen_comment(chain):
 def gen_final_img(chain):
     img = Image.new("RGB",(1800,1800))
     draw = ImageDraw.Draw(img)
-    try:#Linux
-        myfont = ImageFont.truetype("Lato-Medium.ttf",90)
-    except:#Windows
-        myfont = ImageFont.truetype("arial.ttf",90)
-    for ic, link in enumerate(chain):
-        draw.text(((ic>50)*900,(ic%50)*90),link,font=myfont)
+    for il, link in enumerate(chain):
+        size, lines = get_size_and_lines(link,draw)
+        draw.text(((il>=50)*900,(il%50)*36),textwrap.fill(link,len(link)//lines+lines-1),font=get_font(size))
     img.save("final_img.png")
+
+def get_font(size):
+    try:#Linux
+        font = ImageFont.truetype("Lato-Medium.ttf",size)
+    except:#Windows
+        font = ImageFont.truetype("arial.ttf",size)
+        #mac users BTFO
+    return font
+
+def get_size_and_lines(text,draw):
+    font1 = get_fontsize(text,draw)
+    font2 = get_fontsize(textwrap.fill(text,len(text)//2+1),draw)
+    font3 = get_fontsize(textwrap.fill(text,len(text)//3+2),draw)
+    if font1>font3 and font1>font2:
+        font = font1
+        lines = 1
+    elif font2>font3:
+        font = font2
+        lines = 2
+    else:
+        font = font3
+        lines = 3
+    return min(font,90), lines
+
+def get_fontsize(text,draw,maxlenx = 900, maxleny = 36):
+    pw = []
+    ph = []
+    for i in range(10):
+        font = get_font((i+1)*10)
+        ps = draw.textsize(text,font)
+        pw.append(ps[0])
+        ph.append(ps[1])
+        #print (pw, ph)
+    return int(min(10*maxlenx//np.mean(np.diff(pw)),10*maxleny//np.mean(np.diff(ph))))
 
 def main(chain=[]):
     chain = list(chain)
