@@ -8,7 +8,7 @@ import numpy as np
 import subprocess
 import webbrowser as wb
 from pynput.keyboard import Key,Controller
-from PIL import Image
+from PIL import Image, ImageFont, ImageDraw
 
 def upload_comment(graph, post_id, message="", img_path=None):
     if img_path:
@@ -108,11 +108,27 @@ def gen_comment(chain):
         text+=link+'\n'
     return text
 
+def gen_final_img(chain):
+    img = Image.new("RGB",(1800,1800))
+    draw = ImageDraw.Draw(img)
+    try:#Linux
+        myfont = ImageFont.truetype("Lato-Medium.ttf",90)
+    except:#Windows
+        myfont = ImageFont.truetype("arial.ttf",90)
+    for ic, link in enumerate(chain):
+        draw.text(((ic>50)*900,(ic%50)*90),link,font=myfont)
+    img.save("final_img.png")
+
 def main(chain=[]):
     chain = list(chain)
     if not chain:
         title = get_first()
     else:
+        if len(chain)==100:
+            gen_final_img(chain)
+            gr,p_id = upload("We've finished another Segue, here is the complete list",getAccessToken(),"final_img.png")
+            os.remove('chain.npy')
+            return True
         title = chain[0]
         while title in chain:
             title = get_next(chain[-1])
