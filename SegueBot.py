@@ -91,7 +91,7 @@ def get_next(page):
     while True:
         nex = np.random.randint(len(links))
         try:
-            testpage = wikipedia.page(links[nex]).url
+            testpage = wikipedia.page(links[nex],auto_suggest=False).url
             return links[nex]
         except:
             pass
