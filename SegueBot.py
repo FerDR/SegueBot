@@ -10,6 +10,7 @@ import webbrowser as wb
 from pynput.keyboard import Key,Controller
 from PIL import Image, ImageFont, ImageDraw
 import textwrap
+import os
 
 def upload_comment(graph, post_id, message="", img_path=None):
     if img_path:
