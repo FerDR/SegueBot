@@ -7,7 +7,7 @@ import datetime
 import numpy as np
 import subprocess
 import webbrowser as wb
-from pynput.keyboard import Key,Controller
+#from pynput.keyboard import Key,Controller
 from PIL import Image, ImageFont, ImageDraw
 import textwrap
 import os
@@ -68,20 +68,20 @@ def get_image(link,debug=False):
     urllib.request.urlretrieve(url, './image.{}'.format(form))
     return '/home/fer/Documents/Bots/Facebook/SegueBot/image.{}'.format(form)
 
-def get_screenshot(page):
-    subprocess.run(["/bin/bash","-i","-c","disp"])
-    wb.open(wikipedia.page(page,auto_suggest=False).url)
-    time.sleep(10)
-    subprocess.run(["scrot","./image.png"])
-    keyboard = Controller()
-    keyboard.press(Key.ctrl)
-    keyboard.press('w')
-    keyboard.release(Key.ctrl)
-    keyboard.press('w')
-    image = Image.open("./image.png")
-    image = image.crop((170,370,1920,1080))
-    image.save("./image.png")
-    return "./image.png"
+#def get_screenshot(page):
+#    subprocess.run(["/bin/bash","-i","-c","disp"])
+#    wb.open(wikipedia.page(page,auto_suggest=False).url)
+#    time.sleep(10)
+#    subprocess.run(["scrot","./image.png"])
+#    keyboard = Controller()
+#    keyboard.press(Key.ctrl)
+#    keyboard.press('w')
+#    keyboard.release(Key.ctrl)
+#    keyboard.press('w')
+#    image = Image.open("./image.png")
+#    image = image.crop((170,370,1920,1080))
+#    image.save("./image.png")
+#    return "./image.png"
 
 def get_first():
     return wikipedia.random()
