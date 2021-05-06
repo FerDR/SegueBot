@@ -88,7 +88,10 @@ def get_first():
 
 def get_next(page):
     page = wikipedia.page(page,auto_suggest=False)
-    links = page.links
+    try:
+        links = page.links
+    except KeyError:
+        return "ABORT"
     while True:
         nex = np.random.randint(len(links))
         try:
@@ -163,8 +166,14 @@ def main(chain=[]):
             os.remove('chain.npy')
             return True
         title = chain[0]
-        while title in chain:
+        while title in chain and not (title=="ABORT"):
             title = get_next(chain[-1])
+    if title=="ABORT":
+        gen_final_img(chain)
+        gr,p_id = upload("We've PREMATURELY finished another Segue, here is the complete list",getAccessToken(),"final_img.png")
+        os.remove('chain.npy')
+        return True
+
     chain.append(title)
     text = gen_text(chain)
     #try:
