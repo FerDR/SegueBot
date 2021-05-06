@@ -1,6 +1,7 @@
-import facebook
+#import facebook
 import wikipedia
-from pathlib import Path
+#from pathlib import Path
+import BotUtils as BU
 import urllib.request
 import time
 import datetime
@@ -11,44 +12,6 @@ import webbrowser as wb
 from PIL import Image, ImageFont, ImageDraw
 import textwrap
 import os
-
-def upload_comment(graph, post_id, message="", img_path=None):
-    if img_path:
-        post = graph.put_photo(image=open(img_path, 'rb'),
-                               album_path='%s/comments' % (post_id),
-                               message=message)
-    else:
-        post = graph.put_object(parent_object=post_id,
-                                connection_name="comments",
-                                message=message)
-    return post
-
-def upload(message, access_token, img_path=None):
-    graph = facebook.GraphAPI(access_token)
-    if img_path:
-        post = graph.put_photo(image=open(img_path, 'rb'),
-                               message=message)
-    else:
-        post = graph.put_object(parent_object='me',
-                                connection_name='feed',
-                                message=message)
-    return graph, post['post_id']
-
-def getcomments(graph,post_id):#deprecated
-    comments = graph.get_connections(post_id,connection_name='comments')
-    comments = comments['data']
-    if comments:
-        ids = []
-        texts = []
-        for comment in comments:
-            ids.append(comment['from']['id'])
-            texts.append(comment['message'])
-        return ids,texts
-    else:
-        return [],[]
-
-def getAccessToken(filename='access_token.txt'):
-    return Path(filename).read_text().strip()
  
 def get_image(link,debug=False):
     if debug:
@@ -117,43 +80,10 @@ def gen_final_img(chain):
     img = Image.new("RGB",(1800,1800))
     draw = ImageDraw.Draw(img)
     for il, link in enumerate(chain):
-        size, lines = get_size_and_lines(link,draw)
-        draw.text(((il>=50)*900,(il%50)*36),textwrap.fill(link,len(link)//lines+lines-1),font=get_font(size))
+        lines,size = BU.Font.get_wrapped_text(link,draw,900,36)
+        draw.text(((il>=50)*900,(il%50)*36),textwrap.fill(link,len(link)//lines+lines-1),font=BU.Font.get_font(size))
     img.save("final_img.png")
 
-def get_font(size):
-    try:#Linux
-        font = ImageFont.truetype("Lato-Medium.ttf",size)
-    except:#Windows
-        font = ImageFont.truetype("arial.ttf",size)
-        #mac users BTFO
-    return font
-
-def get_size_and_lines(text,draw):
-    font1 = get_fontsize(text,draw)
-    font2 = get_fontsize(textwrap.fill(text,len(text)//2+1),draw)
-    font3 = get_fontsize(textwrap.fill(text,len(text)//3+2),draw)
-    if font1>font3 and font1>font2:
-        font = font1
-        lines = 1
-    elif font2>font3:
-        font = font2
-        lines = 2
-    else:
-        font = font3
-        lines = 3
-    return min(font,90), lines
-
-def get_fontsize(text,draw,maxlenx = 900, maxleny = 36):
-    pw = []
-    ph = []
-    for i in range(10):
-        font = get_font((i+1)*10)
-        ps = draw.textsize(text,font)
-        pw.append(ps[0])
-        ph.append(ps[1])
-        #print (pw, ph)
-    return int(min(10*maxlenx//np.mean(np.diff(pw)),10*maxleny//np.mean(np.diff(ph))))
 
 def main(chain=[]):
     chain = list(chain)
@@ -162,7 +92,7 @@ def main(chain=[]):
     else:
         if len(chain)==100:
             gen_final_img(chain)
-            gr,p_id = upload("We've finished another Segue, here is the complete list",getAccessToken(),"final_img.png")
+            gr,p_id = BU.Facebook.upload("We've finished another Segue, here is the complete list",getAccessToken(),"final_img.png")
             os.remove('chain.npy')
             return True
         title = chain[0]
@@ -170,7 +100,7 @@ def main(chain=[]):
             title = get_next(chain[-1])
     if title=="ABORT":
         gen_final_img(chain)
-        gr,p_id = upload("We've PREMATURELY finished another Segue, here is the complete list",getAccessToken(),"final_img.png")
+        gr,p_id = BU.Facebook.upload("We've PREMATURELY finished another Segue, here is the complete list",BU.getAccessToken(),"final_img.png")
         os.remove('chain.npy')
         return True
 

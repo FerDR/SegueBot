@@ -1,0 +1,3 @@
+[submodule "BotUtils"]
+	path = BotUtils
+	url = https://github.com/FerDR/BotUtils.git
