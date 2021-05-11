@@ -81,7 +81,7 @@ def gen_final_img(chain):
     draw = ImageDraw.Draw(img)
     for il, link in enumerate(chain):
         lines,size = BU.Font.get_wrapped_text(link,draw,900,36)
-        draw.text(((il>=50)*900,(il%50)*36),textwrap.fill(link,len(link)//lines+lines-1),font=BU.Font.get_font(size))
+        draw.text(((il>=50)*900,(il%50)*36),lines,font=BU.Font.get_font(size))
     img.save("final_img.png")
 
 
