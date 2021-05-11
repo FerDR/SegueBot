@@ -92,7 +92,7 @@ def main(chain=[]):
     else:
         if len(chain)==100:
             gen_final_img(chain)
-            gr,p_id = BU.Facebook.upload("We've finished another Segue, here is the complete list",getAccessToken(),"final_img.png")
+            gr,p_id = BU.Facebook.upload("We've finished another Segue, here is the complete list",BU.getAccessToken(),"final_img.png")
             os.remove('chain.npy')
             return True
         title = chain[0]
