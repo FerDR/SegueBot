@@ -114,9 +114,9 @@ def main(chain=[]):
         #img_path = get_screenshot(title)
         img_path = '1x1.png'
         text+='\nNo image found for this article :('
-    gr, p_id = upload(text,getAccessToken(),img_path) 
+    gr, p_id = BU.Facebook.upload(text,BU.getAccessToken(),img_path) 
     comment = gen_comment(chain)
-    c_id = upload_comment(gr, p_id, comment)['id']
+    c_id = BU.Facebook.upload_comment(gr, p_id, comment)['id']
     #print(text)
     #print(comment)
     np.save('chain',chain)
