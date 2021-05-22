@@ -74,7 +74,10 @@ def gen_comment(chain):
     text = "The compete segue so far has been like this:\n"
     for link in chain:
         text+=link+'\n'
-    return text
+    if len(text)>1500:
+        return [text[0:1500],"(cont)\n"+text[1500:-1]]
+    else:
+        return [text]
 
 def gen_final_img(chain):
     img = Image.new("RGB",(1800,1800))
@@ -116,7 +119,8 @@ def main(chain=[]):
         text+='\nNo image found for this article :('
     gr, p_id = BU.Facebook.upload(text,BU.getAccessToken(),img_path) 
     comment = gen_comment(chain)
-    c_id = BU.Facebook.upload_comment(gr, p_id, comment)['id']
+    for c in comment:
+        c_id = BU.Facebook.upload_comment(gr, p_id, comment)['id']
     #print(text)
     #print(comment)
     np.save('chain',chain)
