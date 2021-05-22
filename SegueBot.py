@@ -120,7 +120,7 @@ def main(chain=[]):
     gr, p_id = BU.Facebook.upload(text,BU.getAccessToken(),img_path) 
     comment = gen_comment(chain)
     for c in comment:
-        c_id = BU.Facebook.upload_comment(gr, p_id, comment)['id']
+        c_id = BU.Facebook.upload_comment(gr, p_id, c)['id']
     #print(text)
     #print(comment)
     np.save('chain',chain)
